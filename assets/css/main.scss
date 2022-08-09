@@ -713,3 +713,32 @@ img {
         color: var(--footer_font_a);
     }
 }
+
+/*Personalized - by linea77*/
+/* 7. Aboutme
+   ========================================================================== */
+.aboutme{
+    display:flex;
+    justify-content:center;
+    flex-direction: column;
+    margin:0px;
+    p{
+        text-align:center;
+    }
+    img{
+        margin:10px;
+    }
+}
+#main_statement{
+    font-size:20px;
+    padding:5px;
+    font-weight: bold;
+    line-height:150%;
+}
+
+#sub_statements{
+    font-size:12px;
+}
+.emphasize{
+    font-weight:bold;
+}
