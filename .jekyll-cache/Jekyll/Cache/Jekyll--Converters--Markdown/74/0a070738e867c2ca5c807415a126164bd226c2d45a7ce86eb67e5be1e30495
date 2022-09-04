@@ -1,0 +1,13 @@
+I"�<h2 id="실행-방법과-실습-환경">실행 방법과 실습 환경</h2>
+
+<h3 id="콘솔-사용법">콘솔 사용법</h3>
+
+<ul>
+  <li>개발자 도구 - 설정 옆의 메뉴 - Show console drawer
+  <img src="..\assets\img\post_img\js0002-1.JPG" alt="ShowConsoleDrawer" /></li>
+</ul>
+
+<p>IDE는.. 일단 VSCODE로 쓰기로 했습니다.</p>
+
+<p>가볍게 쓸 수 있을까 싶어서 Notepad++에 이런저런 플러그인 설치해봤는데 완전히 마음에 들지 않네요…</p>
+:ET

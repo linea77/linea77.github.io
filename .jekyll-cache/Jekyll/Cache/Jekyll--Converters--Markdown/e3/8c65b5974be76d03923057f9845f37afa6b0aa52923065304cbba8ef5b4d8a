@@ -1,0 +1,48 @@
+I"e<h2 id="함수">함수</h2>
+
+<h3 id="함수의-다양한-정의-방법">함수의 다양한 정의 방법</h3>
+
+<ol>
+  <li>
+    <p>기본적인 형태</p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">numbering</span><span class="p">(){</span>
+    <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="nx">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">){</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+        <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+   
+<span class="nx">numbering</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>변수에 함수대입</p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">numbering</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(){</span>
+    <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="nx">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">){</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+        <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+   
+<span class="nx">numbering</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>익명함수</p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="kd">function</span> <span class="p">(){</span>
+    <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="nx">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">){</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+        <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">})();</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+:ET
