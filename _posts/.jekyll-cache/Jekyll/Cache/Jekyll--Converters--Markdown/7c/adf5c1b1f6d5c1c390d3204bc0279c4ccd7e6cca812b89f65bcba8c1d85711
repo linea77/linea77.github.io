@@ -1,0 +1,98 @@
+I"s'<h2 id="배열">배열</h2>
+
+<h3 id="원소-추가">원소 추가</h3>
+
+<ol>
+  <li>
+    <p>배열의 맨 뒤에 원소 추가 - <code class="language-plaintext highlighter-rouge">push()</code></p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="dl">'</span><span class="s1">f</span><span class="dl">'</span><span class="p">)</span>
+   
+<span class="c1">//li = ['a', 'b', 'c', 'd', 'e', 'f']</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>배열 두 개 연결 - <code class="language-plaintext highlighter-rouge">concat()</code></p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span><span class="dl">'</span><span class="s1">f</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">g</span><span class="dl">'</span><span class="p">])</span>
+   
+<span class="c1">//li = ['a', 'b', 'c', 'd', 'e', 'f', 'g']</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>배열의 맨 앞에 원소 추가- <code class="language-plaintext highlighter-rouge">unshift()</code></p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="dl">'</span><span class="s1">z</span><span class="dl">'</span><span class="p">);</span>
+   
+<span class="c1">//li = ['z', a', 'b', 'c', 'd', 'e']</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>배열 중간에 원소 추가 - <code class="language-plaintext highlighter-rouge">splice()</code></p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// 인덱스 1위치에서 부터 0개의 요소를 제거 후 'd'를 삽입</span>
+   
+<span class="c1">//li = ['a', 'd', b', 'c']</span>
+</code></pre></div>    </div>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="dl">'</span><span class="s1">x</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">y</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// 인덱스 1위치에서 부터 1개의 요소를 제거 후 'x'와 'y'를 삽입</span>
+   
+<span class="c1">//li = ['a', 'x', 'y', 'c'] </span>
+</code></pre></div>    </div>
+
+    <p>이 때, 삭제되는 원소 ‘b’가 return 된다.</p>
+  </li>
+</ol>
+
+<h3 id="원소-제거">원소 제거</h3>
+
+<ol>
+  <li>
+    <p>배열의 첫번째 원소 제거 -  <code class="language-plaintext highlighter-rouge">shift()</code></p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+   
+<span class="c1">//li = ['b', 'c', 'd', 'e']</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>배열의 마지막 원소 제거 - <code class="language-plaintext highlighter-rouge">pop()</code></p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">]</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+   
+<span class="c1">//li = ['a', b', 'c', 'd']</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="정렬">정렬</h3>
+
+<ol>
+  <li>
+    <p>오름차순 정렬 - <code class="language-plaintext highlighter-rouge">sort()</code></p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">];</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span>
+   
+<span class="c1">//li = ['a', 'b', 'c', 'd', 'e']</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>내림차순 정렬 - <code class="language-plaintext highlighter-rouge">reverse()</code></p>
+
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">e</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">b</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">d</span><span class="dl">'</span><span class="p">];</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+   
+<span class="c1">//li = ['e', 'd', 'c', 'b', 'a']</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+:ET

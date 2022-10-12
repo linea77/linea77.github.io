@@ -1,0 +1,390 @@
+I"�B<h2 id="-목차"><strong>🚩 목차</strong></h2>
+
+<hr />
+
+<ul>
+  <li><a href="#abstract">Abstract</a></li>
+  <li><a href="#1-introduction">1. Introduction</a></li>
+  <li><a href="#2-model">2. Model</a>
+    <ul>
+      <li><a href="#21-regularization">2.1. Regularization</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-datasets-and-experimental-setup">3. Datasets and Experimental Setup</a>
+    <ul>
+      <li><a href="#31-hyperparameters-and-training">3.1. Hyperparameters and Training</a></li>
+      <li><a href="#32-pre-trained-word-vectors">3.2. Pre-trained Word Vectors</a></li>
+      <li><a href="#33-model-variations">3.3. Model Variations</a></li>
+    </ul>
+  </li>
+  <li><a href="#4-results-and-discussion">4. Results and Discussion</a>
+    <ul>
+      <li><a href="#41-multichanel-vs-single-channel-models">4.1. Multichanel vs Single Channel Models</a></li>
+      <li><a href="#42-static-vs-non-static-representations">4.2. Static vs Non-static Representations</a></li>
+      <li><a href="#43-further-observation">4.3. Further observation</a></li>
+    </ul>
+  </li>
+  <li><a href="#5-conclusion">5. Conclusion</a></li>
+</ul>
+
+<h1 id="abstract">Abstract</h1>
+
+<ul>
+  <li>사전학습된 워드벡터(word2vec)로 훈련한 CNN으로 문장단위 분류를 실험함.</li>
+  <li>적은 하이퍼파라미터와 static vector를 사용한 simple CNN만으로도 여러 <a href="https://ko.wikipedia.org/wiki/%EB%B2%A4%EC%B9%98%EB%A7%88%ED%81%AC_(%EC%BB%B4%ED%93%A8%ED%8C%85)">벤치마크</a>에서 좋은 성능을 보여주었음.</li>
+  <li>파인튜닝으로 task-specific vector를 학습하는 것이 성능을 향상시킴</li>
+  <li>추가적으로 task-specific vector와 static vector를 둘 다 사용하여 조금 수정한 모델 구조 또한 제안함.</li>
+  <li>이 논문에서 제안한 CNN모델은 감성분석, 질문분류를 포함한 7가지의 task 중 4개에서 the state of the art(SOTA)보다 좋은 성능을 보여줌.</li>
+</ul>
+
+<h1 id="1-introduction">1. Introduction</h1>
+
+<p><strong>기존의 자연어처리 연구들</strong></p>
+
+<p><img src="https://miro.medium.com/max/828/1*C_gwJa1g_DCi3AehkXYCjQ.png" alt="https://miro.medium.com/max/828/1*C_gwJa1g_DCi3AehkXYCjQ.png" style="zoom:50%;" /> <img src="https://miro.medium.com/max/1400/1*gzXwhDnDmu60OHyEFGnF-Q.png" alt="https://miro.medium.com/max/1400/1*gzXwhDnDmu60OHyEFGnF-Q.png" style="zoom:50%;" /></p>
+
+<p><a href="https://towardsdatascience.com/visualizing-word-embedding-with-pca-and-t-sne-961a692509f5">이미지 출처</a></p>
+
+<ul>
+  <li>
+    <p>neural 언어 모델을 통해 word vector representation을 학습하고, 분류를 위해 그 워드벡터들을 합성하는 방식을 많이 사용함.</p>
+  </li>
+  <li>
+    <p>이 때 워드벡터는 희소(sparce)한 1-of-V(V는 어휘사이즈) 인코딩 결과를, 더 낮은 차원의 은닉층을 통과하면서 단어에 대한 특징을 추출해내는 방식을 사용하였음</p>
+  </li>
+  <li>
+    <p>이렇게 추출된 dense representations에서는 비슷한 특징을 가진 단어끼리는 두 단어 사이의 거리가 가깝고, 서로 다른 특징을 가질 수록 그 거리가 멀어짐. (분포가설기반)</p>
+  </li>
+</ul>
+
+<p><strong>이미지 처리를 위해 고안된 CNN이 NLP에 적용됨</strong></p>
+
+<p><img src="https://media2.giphy.com/media/i4NjAwytgIRDW/giphy.gif?cid=790b7611c907ea5c778c883acc2e6c05c9b414f8d112b665&amp;rid=giphy.gif&amp;ct=g" alt="cnn" style="zoom:50%;" /></p>
+
+<p><a href="https://giphy.com/gifs/blog-daniel-keypoints-i4NjAwytgIRDW">이미지출처</a></p>
+
+<p><img src="https://149695847.v2.pressablecdn.com/wp-content/uploads/2018/01/conv-full-layer.gif" alt="[이미지 출처](https://analyticsindiamag.com/convolutional-neural-network-image-classification-overview/)" style="zoom:50%;" /></p>
+
+<p><a href="https://analyticsindiamag.com/convolutional-neural-network-image-classification-overview/">이미지 출처</a></p>
+
+<ul>
+  <li>
+    <p>합성곱신경망(CNN)은 Computer vision 분야에서 고안된 것으로 레이어의 local features에 필터를 적용하는 방식임.</p>
+  </li>
+  <li>
+    <p>곧 CNN이 NLP task들에도 적용이 되었는데, 여러 task들에서 좋은 성능을 보여주었음.</p>
+  </li>
+</ul>
+
+<p><strong>본 논문의 연구 내용</strong></p>
+
+<ul>
+  <li>
+    <p>unsupervised neural language model에서 얻은 워드벡터에 1개의 convolution layer를 가진 CNN을 학습시킴.</p>
+  </li>
+  <li>
+    <p>이 워드벡터는 Google News에서 1000억개 단어로 학습된 워드벡터임.</p>
+  </li>
+  <li>
+    <p>이 워드벡터 값을 고정시킨 뒤 아주 적은 양의 하이퍼파라미터만 튜닝해서 학습을 진행한 결과, 훌륭한 성능을 보여주었음 ⇒ 사전학습된 워드벡터가 universal features extractors임을 확인</p>
+  </li>
+  <li>
+    <p>그 뒤에 task-specific하도록 파인튜닝한 결과, 성능이 더 향상되었음.</p>
+  </li>
+  <li>
+    <p>그 뒤, <a href="https://velog.io/@jee-9/Deep-Learning-%EA%B8%B0%EC%B4%88-Channel-Feature-Map-%EA%B0%9C%EC%9A%94">채널</a>을 여러개로 만들어 사전학습된 벡터와 파인튜닝 후 task-specific 벡터를 모두 사용하도록 모델을 수정함</p>
+  </li>
+  <li>
+    <p>또한 image classification에 관하여, 딥러닝 모델에서 얻은 feature extractors가 original task와 차이가 있는 다른 task에서도 좋은 성능을 보여주었음을 증명하였던, Razavian et al.(2014) 연구와 철학적으로 유사함.</p>
+  </li>
+</ul>
+
+<h1 id="2-model">2. Model</h1>
+
+<p><strong>기본적인 모델 구조</strong></p>
+
+<ul>
+  <li>모델 구조는 Collobert et al.(2011)의 CNN 구조를 조금 변형한 형태이다.</li>
+</ul>
+
+<p><img src="\assets\img\post_img\p0001\figure 1.png" alt="figure1" /></p>
+
+<hr />
+
+<p><img src="\assets\img\post_img\p0001\equation 1.png" alt="Untitled" /></p>
+
+<p>(1) Concatenation operation : 1번째 워드 벡터 부터 n번째 워드벡터까지를 늘어놓은 것</p>
+
+<hr />
+
+<p><img src="\assets\img\post_img\p0001\equation 2.png" alt="Untitled" /></p>
+
+<p>(2) Convolution operation: i번째 워드벡터부터 i+h-1번째 워드벡터를 늘어놓은 것에 크기가 h*k인 필터 W를 곱하고 bias를 더하여 만든 i번째 feature.</p>
+
+<p><img src="\assets\img\post_img\p0001\equation 3.png" alt="Untitled" /></p>
+
+<p>(3) <a href="https://velog.io/@jee-9/Deep-Learning-%EA%B8%B0%EC%B4%88-Channel-Feature-Map-%EA%B0%9C%EC%9A%94">feature map</a> :각각의 가능한 모든 단어 window에 대해 (2)를 수행하여 만든 feature map.</p>
+
+<ul>
+  <li>윈도우사이즈(h)가 다른 여러개의 필터를 사용하기 때문에 여러개의 features를 얻게 됨.</li>
+</ul>
+
+<hr />
+
+<p><img src="\assets\img\post_img\p0001\equation 4.png" alt="Untitled" /></p>
+
+<ul>
+  <li><a href="https://stackoverflow.com/questions/48549670/pooling-vs-pooling-over-time">max-over-time pooling operation</a></li>
+  <li>가장 중요한 feature를 추출하기 위해 하나의 필터에 대해 하나의 최댓값만을 취함.</li>
+  <li>(이미지는 크기가 같기 때문에) 이미지에서 일반적으로 사용하는 방법과 달리, max-over-time을 사용하는 이유는 서로 다른 길이의 문장이더라도 적용가능하기 때문임.</li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>이 여러개의 features는 penultimate layer(맨 마지막에서 두 번째 레이어)를 구성하게 되고, fully connected softmax layer를 통과하여 확률분포를 출력하게 됨.</li>
+</ul>
+
+<p><strong>Model variant; Multichannel Architecture - 두 개의 Channel 사용</strong></p>
+
+<ul>
+  <li>1 Channel of stactic word vector + 1 Channel of fine-tuned word vector
+    <ul>
+      <li>Static word vector : 훈련 내내 정적으로 유지되는(값이 고정되어있는) 워드벡터</li>
+      <li>fine-tuned word vector : 역전파(backpropagation)를 통해 파인튜닝되는(값이 업데이트되는) 워드벡터</li>
+    </ul>
+  </li>
+  <li>각각의 필터가 두 개의 채널에 모두 적용되어 (2)Convolution operation를 계산하기 위해 서로 더해짐.</li>
+  <li>나머지는 single channel architecture와 동일함.</li>
+</ul>
+
+<h2 id="21-regularization">2.1. Regularization</h2>
+
+<ol>
+  <li>
+    <p>순전파/역전파</p>
+
+    <p><img src="\assets\img\post_img\p0001\equation 5.png" alt="Untitled" /></p>
+
+    <p>(5) Drop out</p>
+
+    <ul>
+      <li>penultimate layer(맨 마지막에서 두번째 레이어)에 dropout을 적용</li>
+      <li>feature map에 드롭아웃을 수행하는 마스킹 벡터 r을 곱함. 마스킹 되지 않은 유닛으로만 역전파가 진행됨.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Test time</p>
+
+    <p><img src="\assets\img\post_img\p0001\equation 6.png" alt="Untitled" /></p>
+
+    <ul>
+      <li>학습되어있는 가중치 W에 p를 곱하여 스케일링한 것( $\hat{w}$ )을 unseen sentences(테스트 데이터셋)에 사용</li>
+      <li>
+        <p>가중치 벡터에 l2-norms constraint를 줘서<img src="C:\Users\User\Desktop\Github\linea77.github.io\assets\img\post_img\p0001\inequality 1.png" alt="Untitled" style="zoom: 50%;" />일 때,</p>
+
+        <p><img src="C:\Users\User\Desktop\Github\linea77.github.io\assets\img\post_img\p0001\equation 7.png" alt="Untitled" style="zoom:50%;" />가 되도록 rescailing을 함.</p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h1 id="3-datasets-and-experimental-setup">3. Datasets and Experimental Setup</h1>
+
+<p><img src="\assets\img\post_img\p0001\table 1.png" alt="Untitled" style="zoom:50%;" /></p>
+
+<p><strong>Benchmarks</strong></p>
+
+<ul>
+  <li>MR :
+    <ul>
+      <li>1문장 영화 리뷰</li>
+      <li>positive / negative</li>
+    </ul>
+  </li>
+  <li>SST-1
+    <ul>
+      <li>Stanford Sentiment Treebank</li>
+      <li>영화리뷰의 확장버전</li>
+      <li>train/dev/test splits 제공됨</li>
+      <li>very positive / positive / netural / negative / very negative</li>
+    </ul>
+  </li>
+  <li>SST-2
+    <ul>
+      <li>SST-1과 기본적으로 같음</li>
+      <li>positive / negative</li>
+    </ul>
+  </li>
+  <li>Subj
+    <ul>
+      <li>Subjectivity(주관성) 데이터셋</li>
+      <li>문장이 Subjective인지 Objective인지 분류하는 태스크</li>
+    </ul>
+  </li>
+  <li>TREC
+    <ul>
+      <li>TREC question 데이터셋</li>
+      <li>질문을 6개의 질문 타입(person, location, numeric information 등)으로 분류하는 태스크</li>
+    </ul>
+  </li>
+  <li>CR
+    <ul>
+      <li>상품에 대한 고객 리뷰(Customer reviews)</li>
+      <li>Positive / Negative</li>
+    </ul>
+  </li>
+  <li>MPQA
+    <ul>
+      <li>Opinion polarity detection</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="31-hyperparameters-and-training">3.1. Hyperparameters and Training</h2>
+
+<ul>
+  <li>
+    <p>활성화함수 : rectified liner uitits(ReLU)</p>
+  </li>
+  <li>
+    <p>filter window h 크기 = 3, 4, 5</p>
+  </li>
+  <li>
+    <p>feature map 개수 = 100</p>
+  </li>
+  <li>
+    <p>dropout rate (p) = 0.5</p>
+  </li>
+  <li>
+    <p>l2 constraint (s) = 3</p>
+  </li>
+  <li>
+    <p>mini-batch size = 50</p>
+  </li>
+</ul>
+
+<p>(위 값들은 SST-2 dev set으로 <a href="https://justweon-dev.tistory.com/21">grid search</a>를 통해 선택함)</p>
+
+<ul>
+  <li>early stopping
+    <ul>
+      <li>dev set 사용</li>
+      <li>dev set이 없으면 training data의 10%를 랜덤하게 선택하여 dev set으로 사용</li>
+    </ul>
+  </li>
+  <li>stochastic gradient descent(확률적 경사 하강법) over shuffled mini-batches</li>
+  <li>Adadelta</li>
+</ul>
+
+<h2 id="32-pre-trained-word-vectors">3.2. Pre-trained Word Vectors</h2>
+
+<ul>
+  <li>워드벡터를 unsupervised neural language model에서 얻은 워드벡터로 초기화하는 것은, 큰 규모의 supervised training set이 없을 때 성능을 향상시키도록 많이 쓰는 방법임.</li>
+  <li>Google NEws의 1000억개 어휘로 학습된 word2vec을 사용함.</li>
+  <li>워드벡터 dimensionality = 300</li>
+  <li>Continuous bag-of-words(CBOW)사용</li>
+  <li>사전 학습된 어휘 집합에 없는 단어는 무작위로 초기화함(randomly initialized)</li>
+</ul>
+
+<h2 id="33-model-variations">3.3. Model Variations</h2>
+
+<ul>
+  <li>CNN-rand
+    <ul>
+      <li>모든 어휘에 대해 랜덤하게 초기화하고, 훈련을 통해 수정해나감.(사전학습된 워드벡터를 사용하지 않음)</li>
+    </ul>
+  </li>
+  <li>CNN-static
+    <ul>
+      <li>사전학습된 word2vec 워드벡터와, 랜덤하게 초기화한 unknown words 모두 처음 상태 그대로 고정(static)되어있고, 다른 파라미터들만 학습됨.</li>
+    </ul>
+  </li>
+  <li>CNN-non-static
+    <ul>
+      <li>사전학습된 word2vec 워드벡터와, 랜덤하게 초기화한 unknown words 워드벡터가 각각의 task에 의해 파인튜닝됨.(워드벡터가 업데이트 됨)</li>
+    </ul>
+  </li>
+  <li>CNN-multichannel
+    <ul>
+      <li>두 종류의 워드벡터(static &amp; non-static)을 사용함.</li>
+      <li>각각의 집합은 channel이 되고, 각각의 필터가 두 개의 채널 모두에 적용됨</li>
+      <li>그러나 non-static channel 에만 역전파가 허용됨</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="4-results-and-discussion">4. Results and Discussion</h1>
+
+<p><img src="\assets\img\post_img\p0001\table 2.png" alt="Untitled" style="zoom: 67%;" /></p>
+
+<ul>
+  <li>CNN-rand VS 사전학습을 사용한 모델들
+    <ul>
+      <li>CNN-rand는 성능이 잘 나오지 않는 반면, 사전학습된 워드벡터를 사용한 다른 모델은 훨씬 더 좋은 성능을 보여주었음</li>
+    </ul>
+  </li>
+  <li>CNN-static VS 복잡한 기법을 사용한 모델들
+    <ul>
+      <li>CNN-static은 간단히 사전학습된 워드벡터를 사용했을 뿐인데도, 복잡한 pooling 방식을 사용하는 모델(DCNN), 사전의 파스트리를 계산해야 하는 모델(RNTN)과 비등비등한 성능을 보여줌</li>
+    </ul>
+  </li>
+  <li>CNN-non-static
+    <ul>
+      <li>fine-tuning하는 것도 더 성능을 향상시킴</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="41-multichanel-vs-single-channel-models">4.1. Multichanel vs Single Channel Models</h2>
+
+<ul>
+  <li>처음에 멀티채널구조가 오버피팅(overfitting)을 막을 수 있을 것이라고 기대했고, 따라서 데이터셋이 작아지더라도 싱글채널모델보다 더 좋은 성능을 보여줄 것이라고 생각했음</li>
+  <li>그러나 뚜렷하게 멀티채널구조가 더 좋은 성능을 보여주진 않았으며, 성능에 대한 결과가 섞여서 나왔다.</li>
+  <li>따라서 fine-tuning 과정의 일반화에 대한 추가연구가 필요하다.
+    <ul>
+      <li>예) 채널을 1개로 유지하되, 학습하는 동안 수정될 수 있는 추가적인 차원을 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="42-static-vs-non-static-representations">4.2. Static vs Non-static Representations</h2>
+
+<p><img src="\assets\img\post_img\p0001\table 3.png" alt="Untitled" /></p>
+
+<ul>
+  <li>Non-satic 채널이 다루고 있는 task에 대해 더 구체적으로 워드벡터표상을 만들어내었음
+    <ul>
+      <li>기존 word2Vec에서는 통사적인 유사성(비슷한 환경에서 사용됨)에 집중하여 bad와 good을 유사한 단어로 표상하였음</li>
+      <li>그러나 positive/negative의 라벨을 갖는 SST-2의 감정분석 task로 파인튜닝한 결과 bad와 good은 더이상 유사한 단어로 표상되지 않음.</li>
+    </ul>
+  </li>
+  <li>사전학습된 워드벡터에 나타나지 않아서 랜덤하게 초기화한 경우,
+    <ul>
+      <li>파인튜닝을 통해 더 의미있는 표상을 만들어낼 수 있었음.</li>
+      <li>예) 콤마(,)가 접속사와 유사함을 잡아냄.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="43-further-observation">4.3. Further observation</h2>
+
+<ul>
+  <li>Kalchbrenner et al. (2014)에서 동일한 구조의 CNN을 사용했으나 훨씬 성능이 안좋았음
+    <ul>
+      <li>필터의 사이즈를 여러개로 사용하고, 이에 따라 feature map도 여러개로 만들었기 때문에 차이가 생김</li>
+    </ul>
+  </li>
+  <li>Dropout이 좋은 정규화 도구임이 증명되었음. 지속적으로 2%~4%의 성능 향상을 보여줌</li>
+  <li>word2vec에 없는 단어를 무작위로 초기화할 때, word2vec 벡터와 동일한 분산을 갖도록 a를 선택하고 샘플링을 해 약간의 개선을 얻었음.</li>
+  <li>위키피디아로 학습된 다른 워드벡터도 사용해 보았으나 word2vec이 훨씬 우수한 성능을 보여줌</li>
+  <li>Adadelta는 Adagrad와 비슷한 결과를 보여주었으나 epoch수가 더 적게 필요했음.</li>
+</ul>
+
+<h1 id="5-conclusion">5. Conclusion</h1>
+
+<ul>
+  <li>하이퍼파라미터를 거의 튜닝하지 않았음에도, 하나의 레이어를 가진 simple CNN은 꽤 좋은 성능을 보여주었다.</li>
+  <li>또한 사전학습된 워드벡터를 사용하는 것이 자연어처리 딥러닝에서 중요함을 보여준다.</li>
+</ul>
+:ET

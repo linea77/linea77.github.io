@@ -1,0 +1,22 @@
+I"g<h2 id="비교">비교</h2>
+
+<h3 id="와-">’==’와 ‘===’</h3>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">alert</span><span class="p">(</span><span class="mi">1</span><span class="o">==</span><span class="dl">"</span><span class="s2">1</span><span class="dl">"</span><span class="p">);</span> <span class="c1">//True</span>
+<span class="nx">alert</span><span class="p">(</span><span class="mi">1</span><span class="o">===</span><span class="dl">"</span><span class="s2">1</span><span class="dl">"</span><span class="p">);</span> <span class="c1">//False</span>
+</code></pre></div></div>
+
+<p>(이게 된다고?)</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">alert</span><span class="p">(</span><span class="kc">undefined</span> <span class="o">==</span> <span class="kc">null</span><span class="p">);</span> <span class="c1">//True</span>
+<span class="nx">alert</span><span class="p">(</span><span class="kc">undefined</span> <span class="o">===</span> <span class="kc">null</span><span class="p">);</span> <span class="c1">//False</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>결론 : ===를 사용하자!</p>
+</blockquote>
+
+<h3 id="와--1">’!=’와 ‘!==’</h3>
+
+<p>는 ==와 === 의 관계와 같다.</p>
+:ET
